@@ -2,6 +2,7 @@ import datetime
 import hashlib
 import typing
 
+from apscheduler.jobstores.base import BaseJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.date import DateTrigger
@@ -10,20 +11,27 @@ from apscheduler.triggers.date import DateTrigger
 class Cron:
     def __init__(
         self,
-        storage: typing.Any,
+        store: BaseJobStore,
         *jobs: tuple[typing.Callable, CronTrigger | DateTrigger, dict[str, typing.Any] | None],
     ) -> None:
         self.scheduler = AsyncIOScheduler(
             timezone=datetime.UTC,
-            jobstores={"default": storage},
+            jobstores={"default": store},
             job_defaults={
                 "coalesce": False,
                 "max_instances": 1,
             },
         )
 
-        for func, trigger, kwargs in jobs:
-            self.add(func, trigger, kwargs or {})
+        for job in jobs:
+            match job:
+                case (func, trigger):
+                    kwargs = {}
+                case (func, trigger, kwargs):
+                    kwargs = kwargs or {}
+                case _:
+                    continue
+            self.add(func, trigger, kwargs)
 
     def add(
         self,

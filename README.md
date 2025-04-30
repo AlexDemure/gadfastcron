@@ -30,7 +30,7 @@ def func():
     print('test')
 
 cron = Cron(
-    jobstores.Sqlalchemy(dsn),
+    jobstores.Sqlalchemy(dsn).store,
     (func, triggers.cron.everyday()), 
 )
 

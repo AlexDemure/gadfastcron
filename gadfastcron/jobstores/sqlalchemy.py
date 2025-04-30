@@ -1,4 +1,7 @@
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+try:
+    from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+except ImportError as exc:  # pragma: nocover
+    ...
 
 
 class Sqlalchemy:

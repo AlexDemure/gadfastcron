@@ -1,7 +1,11 @@
 import urllib.parse
 
-from apscheduler.jobstores.redis import RedisJobStore
 from gadfastcron import const
+
+try:
+    from apscheduler.jobstores.redis import RedisJobStore
+except ImportError as exc:  # pragma: nocover
+    ...
 
 
 class Redis:

@@ -1,7 +1,11 @@
 import urllib.parse
 
-from apscheduler.jobstores.mongodb import MongoDBJobStore
 from gadfastcron import const
+
+try:
+    from apscheduler.jobstores.mongodb import MongoDBJobStore
+except ImportError as exc:  # pragma: nocover
+    ...
 
 
 class Mongo:
